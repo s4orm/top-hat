@@ -105,7 +105,7 @@ li {
 }
 .middle__left__tree {
   margin: 0;
-  height: 450px;
+  height: 100%;
   display: none;
   flex-direction: column;
   overflow: auto;
@@ -173,8 +173,8 @@ li {
 }
 .middle__right {
   margin: 0;
-  width: 100%;
   display: flex;
+  flex-grow: 3;
   justify-content: center;
   align-items: center;
   background-color: #e3e3e3;
@@ -300,6 +300,18 @@ li {
   display: block;
   overflow: hidden;
   background-color: #fffff0;
+}
+.search__notfound {
+  margin: 20px 0 0 0;
+  padding: 2px 0;
+  display: table;
+  color: #ff3f00;
+  border: 1px solid #ff3f00;
+  border-radius: 3px;
+  font: 12px Arial;
+  font-weight: normal;
+  width: 99%;
+  text-align: center;
 }
 .search__dir {
   margin: 0 4px 0 0;

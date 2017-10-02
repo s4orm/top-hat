@@ -11,7 +11,7 @@ var param = {
     thumb: {
 
         blockHeight: 511,
-        blockWidth: 650,
+        blockWidth: 506,
 
         width: 122,
         height: 142,

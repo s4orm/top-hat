@@ -342,7 +342,7 @@ var treeMixin = {
          * @des click next dir in list
          * @param id
          */
-        treeAddChild: function (child) {
+        treeAddChild: function (child, fullpath) {
 
             //Vue.set(this.tree.children, '', child);
             /**
@@ -365,7 +365,10 @@ var treeMixin = {
             if (branchObj.parent.children) {
             //
                 child.id = 'tree' + parseInt(this.tree.children[this.tree.children.length - 1].id.replace(/tree/, ''), 10) + 1;
-            //    branchObj.parent.children.push(child);
+                branchObj.parent.children.push(child);
+                if (fullpath) {
+                    param.tree.cachePaths[child.id] = fullpath;
+                }
             }
         },
 

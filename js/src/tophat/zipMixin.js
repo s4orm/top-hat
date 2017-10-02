@@ -123,8 +123,7 @@ var zipMixin = {
             var id = id || this.treeParam.idEnd;
             var pathSelected = param.tree.cachePaths[id];
 
-            var pathArr = pathSelected.match(/(.+)\/([^/]+$)/);
-
+            var pathArr = pathSelected.match(/(.+)\/([^/]+$)/); //check '/path../filename'  ["/path../filename", "/path..", "filename"]
             if (pathArr.length != 3) {
                 return;
             }
@@ -203,7 +202,7 @@ var zipMixin = {
                             }
                             break;
 
-                        default:
+                        default: //repack
                             //
                             //var title = lang.confirm.rezip;
                             //var des = '<b>'+pathSelected + '</b><br>' + tmpFolder;
@@ -251,7 +250,7 @@ var zipMixin = {
                                             des: pathSelected + '<br><b>' + sizeFormated + '</b>'
                                         }, undefined);
 
-                                        this.console(sizeFormated + ', filepath: ' + zipFilePath);
+                                        this.console(sizeFormated + ', filepath: ' + pathSelected);
                                         this.$set(this.thumb, 'frame', []);
 
                                         //sizeFormated
@@ -309,6 +308,19 @@ var zipMixin = {
                         }, undefined);
 
                         this.console(sizeFormated + ', filepath: ' + zipFilePath);
+
+                        var fullpath = path.normalize(path.join(this.fullpath, '..'));
+                            fullpath = path.join(fullpath, zipFileName);
+                        this.treeAddChild(
+                        {
+                            ext:'zip',
+                            //id:"tree",
+                            isFolder:false,
+                            name:zipFileName,
+                            size:sizeFormated
+                        },
+                        fullpath);
+
                         if (callback) {
                             callback();
                         }

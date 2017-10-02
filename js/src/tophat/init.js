@@ -61,12 +61,13 @@ var app = new Vue({
 
         bookmarks: [],
 
-        treeTabSelected: 'tree', //bookmarks, tree
+        treeTabSelected: 'bookmarks', //bookmarks, tree
 
         search: {
             list: {},
             val: '',
-            turnOff: false
+            turnOff: false,
+            notfound: false //if nothing found
         },
 
         file: {
@@ -78,6 +79,10 @@ var app = new Vue({
         pathHistory: [],
 
         imgCachePreview: {},
+
+        style: {
+            leftWidth: param.thumb.blockWidth
+        },
 
         thumb: {
 
@@ -111,7 +116,7 @@ var app = new Vue({
                 bottomInit: 2,
                 top: 2,
                 bottom: 2,
-                height: 200,
+                height: 300,
                 active: false,
                 heightScrollOffsetRow: 0, //height in px of row on scroll vertical line
             },
@@ -365,11 +370,11 @@ var app = new Vue({
             //scroll thumb
             else {
                 if (deltaY > 0) {
-                    this.thumbGoShow('next');
+                    this.thumbGoShow('nextRow');
                     this.thumbScrollMoveByKey();
                 }
                 else {
-                    this.thumbGoShow('prev');
+                    this.thumbGoShow('prevRow');
                     this.thumbScrollMoveByKey();
                 }
             }

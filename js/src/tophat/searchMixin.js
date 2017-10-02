@@ -13,6 +13,8 @@ var searchMixin = {
 
             var pathObj = path.parse(fullpath);
 
+            this.loadingStart();
+            this.$set(this.search, 'notfound', false);
             this.console('start search: ' + val);
             this.$set(this.search, 'val', val);
 
@@ -154,9 +156,14 @@ var searchMixin = {
             }
 
             var list = {};
+            var flagNotfound = true;
 
             for (var i in listObject) {
+
+                flagNotfound = false;
+
                 list[i] = { dir:i, file:listObject[i], total: listObject[i].length };
+
                 if (listObject[i].length < 3) {
                     list[i].showFiles = true;
                 }
@@ -164,6 +171,16 @@ var searchMixin = {
             }
 
             this.$set(this.search, 'list', list);
+
+
+            if (flagNotfound) {
+                this.$set(this.search, 'notfound', true);
+                setTimeout(function(){
+                    this.$set(this.search, 'notfound', false);
+                }.bind(this), 3000)
+            }
+
+            this.loadingEnd();
         },
 
         /**

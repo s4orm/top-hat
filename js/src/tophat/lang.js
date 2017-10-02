@@ -80,7 +80,8 @@ var lang = {
         },
 
         search: {
-            line: "Search by Ctrl+Enter"
+            line: "Search by Ctrl+Enter",
+            notfound: "Nothing found"
         },
 
         selected: "selected",
@@ -187,7 +188,8 @@ var lang = {
         },
 
         search: {
-            line: "Поиск Ctrl+Enter"
+            line: "Поиск Ctrl+Enter",
+            notfound: "Ничего не найдено"
         },
 
         selected: "выделено",

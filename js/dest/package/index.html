@@ -34,7 +34,7 @@
 
     <div class="middle">
 
-        <div id="block-middle-left" class="middle__left">
+        <div id="block-middle-left" class="middle__left" :style="{width: style.leftWidth + 'px'}">
 
             <div id="block-fullpath" class="fullpath" @click="clickDirFullpathSelect($event);setFocus('fullpath');" data-act="select">
                 <b v-for="dir in fullpathArr" @click="clickTreeFullpathJump($event)" v-show="flag.show.dirFullpath == false">
@@ -136,6 +136,7 @@
     <div class="search" :class="{search_turnoff: search.turnOff}" v-if="search.val != ''" @click="clickSearch">
         <i class="search__turnoff" data-act="turnOff">&#9660;</i>
         <i class="search__close" data-act="close">✕</i>
+        <b class="search__notfound" v-if="search.notfound">{{lang.search.notfound}}</b>
         <ul class="search__list">
             <li class="search__list__item" v-for="(item, key) in search.list">
 
