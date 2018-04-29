@@ -63,6 +63,7 @@ var searchMixin = {
 
                             this.console('createNewDB', 'append');
 
+
                             this.fileGetListByDir(fullpath, function(list){
 
                                 var result = this.searchInList(val, list);
@@ -71,7 +72,7 @@ var searchMixin = {
 
                                 var text = JSON.stringify(list);
 
-                                fs.writeFile(searchFileDB, text, function(err) {
+				fs.writeFile(searchFileDB, text, function(err) {
 
                                     if(err) {
                                         return console.log(err);
@@ -130,19 +131,25 @@ var searchMixin = {
 
                 item = list[i];
 
-                if (item.search(reg) != -1) {
+		if (item) {
+		  
+		  if (item.search(reg) != -1) {
 
-                    dir = path.parse(item).dir;
+		      dir = path.parse(item).dir;
 
-                    if (!result[dir]) {
-                            
-                        result[dir] = [];
-                        result[dir].push(item);
-                    }
-                    else {
-                        result[dir].push(item);
-                    }
-                }
+		      if (!result[dir]) {
+			      
+			  result[dir] = [];
+			  result[dir].push(item);
+		      }
+		      else {
+			  result[dir].push(item);
+		      }
+		  }
+		}
+		//else {
+		//   console.log(i, item); 
+		//}
             }
 
             return result;

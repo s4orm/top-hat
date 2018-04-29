@@ -20,6 +20,30 @@ var topMixin = {
 
             switch (type) {
 
+
+                case 'clickSettings':
+
+                    this.clickSettingsMenu();
+                    break;
+
+                case 'clickImageResize':
+
+                    this.clickImageResize();
+
+                    break;
+
+
+                case 'filter-img-only':
+
+                    if (!this.$root.filter.imgOnly) {
+                        this.$set(this.$root.filter, 'imgOnly', true);
+                    }
+                    else {
+                        this.$set(this.$root.filter, 'imgOnly', false);
+                    }
+
+                    break;
+
                 case 'clickZipFolders':
 
                     zz.window.confirm({
@@ -86,11 +110,17 @@ var topMixin = {
 
                 case 'clickAntiAliasing':
 
-                    if (!this.scene.antiAliasing) {
-                        this.$set(this.scene, 'antiAliasing', true);
+                    this.antiAliasingSet(); // on|off
+
+                    break;
+
+                case 'clickCloseUnpackTail':
+
+                    if (!this.$root.flag.closeUnpackTail) {
+                        this.$root.$set(this.$root.flag, 'closeUnpackTail', true);
                     }
                     else {
-                        this.$set(this.scene, 'antiAliasing', false);
+                        this.$root.$set(this.$root.flag, 'closeUnpackTail', false);
                     }
 
                     break;

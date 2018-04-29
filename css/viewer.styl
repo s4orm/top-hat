@@ -263,6 +263,10 @@ li
   background url(/img/createStream.png) 50% 50% no-repeat
   cursor pointer
 
+.scene-audio
+  margin 0
+  width 100%
+
 .scene-gif
   margin 0
   display block
@@ -330,6 +334,7 @@ li
     &__item
       margin 0
       padding 2px 0
+      position relative
 
       &__dir
         margin 0 0 1px 0
@@ -686,17 +691,17 @@ li
 
   &__content
     margin 0
-    height 394px
+    height 100%
     width 100%
     overflow hidden
 
 .bookmarks
+  height calc(100% - 10px)
   margin 0 0 4px 0
   padding 6px 0 8px 4px
   display flex
+  flex-flow column wrap
   justify-content flex-start
-  flex-direction column
-  flex-wrap wrap
   align-items flex-start
   display none
   &_active
@@ -843,6 +848,21 @@ li
     height 0
     display none
 
+  &__size
+    margin 4px 2px 0 1px
+    width 2px
+    height 12px
+
+    &_blue
+      background-color #0096df
+    &_green
+      background-color #83bf00
+    &_yellow
+      background-color #ffc800
+    &_orange
+      background-color #da7700
+    &_red
+      background-color #ba2900
 
 .console
   margin 0
@@ -967,6 +987,15 @@ li
   background-position 50% 50%
   background-repeat no-repeat
 
+.ico-image-resize
+  margin 2px
+  padding 2px
+  border 1px solid #e4e4e4
+  border-radius 5px
+  background-image url(../img/image-resize.png)!important
+  background-position 50% 50%
+  background-repeat no-repeat
+
 .ico-file-txt
   margin 2px
   padding 2px
@@ -1003,12 +1032,26 @@ li
   background-position 50% 50%
   background-repeat no-repeat
 
+.ico-close-unpack-tail
+  margin 2px
+  padding 2px
+  border 1px solid #e4e4e4
+  border-radius 5px
+  background-image url(../img/close-unpack-tail.png)!important
+  background-position 50% 50%
+  background-repeat no-repeat
+
+.ico_close_unpack_tail
+  background-color #8eb01a
+  &:hover
+    background-color #8eb01a
+
 .ico-anti-aliasing
   margin 2px
   padding 2px
   border 1px solid #e4e4e4
   border-radius 5px
-  background-image url(../img/anti-aliasing.png)!important
+  background-image url(../img/hr.png)!important
   background-position 50% 50%
   background-repeat no-repeat
 
@@ -1016,6 +1059,29 @@ li
   background-color #8eb01a
   &:hover
     background-color #8eb01a
+
+.ico-filter-img-only
+  margin 2px
+  padding 2px
+  border 1px solid #e4e4e4
+  border-radius 5px
+  background-image url(../img/filter-img.png)!important
+  background-position 50% 50%
+  background-repeat no-repeat
+
+.ico_filter_img_only_active
+  background-color #8eb01a
+  &:hover
+    background-color #8eb01a
+
+.ico-settings
+  margin 2px
+  padding 2px
+  border 1px solid #e4e4e4
+  border-radius 5px
+  background-image url(../img/settings.png)!important
+  background-position 50% 50%
+  background-repeat no-repeat
 
 .ico-rename
   margin 2px
@@ -1146,3 +1212,45 @@ li
 
 .display_flex
   display flex
+
+.menu
+  position absolute
+  left 0
+  top 30px
+  margin 0
+  padding 0
+  width 100%
+  height 100%
+
+.window
+  top 0
+  left 0
+  position absolute
+  display flex
+  flex-direction column
+  min-width 600px
+  width 80%
+  height 90%
+  background linear-gradient(to bottom,#f7f7f7,#eaeaea)
+  box-shadow 0 1px 0 rgba(255,255,255,.5) inset,0 -1px 0 rgba(255,255,255,.4) inset
+  z-index 999
+
+  &__title
+    font 0.9em Arial, Sans-serif
+    margin 5px 10px 10px 10px
+    position absolute
+    left 4px
+
+  &__body
+    margin 10px 20px
+    padding 24px 0 0 0
+    font 0.8em Arial, Sans-serif
+    width 90%
+    height 90%
+    overflow auto
+
+  &__block
+    margin 10px 2px
+    padding 0
+    font 1em Arial, Sans-serif
+    overflow auto

@@ -3,6 +3,7 @@ var param = {
 
     programName: 'tophat',
     bookmarksFileName: 'tophat_bookmarks.json',
+    settingsFileName: 'tophat_settings.json',
 
     tmpDirs: {}, //cache original fullpath, tmp path
 
@@ -204,7 +205,9 @@ param.keyCommands = [
 
     { name: 'closeProgramm', keyStr: 'ctrl+q' },
     { name: 'saveFile', keyStr: 'ctrl+s', focus: ['scene'] },
-    { name: 'dirRename', keyStr: 'shift+r', focus: ['dir'] },
+
+    { name: 'dirRename', keyStr: 'shift+r', focus: ['dir', 'thumb'] },
+    { name: 'deleteDir', keyStr: 'ctrl+delete', focus: ['dir', 'thumb'] },
 
     { name: 'zip', keyStr: 'shift+z', focus: ['thumb','dir'] },
 
@@ -228,6 +231,7 @@ param.keyCommands = [
     { name: 'prevDir', keyStr: 'pageUp', focus: ['thumb'] },
     { name: 'nextDir', keyStr: 'pageDown', focus: ['thumb'] },
     { name: 'repackArch', keyStr: 'ctrl+r', focus: ['thumb'] },
+    { name: 'antiAliasing', keyStr: 'ctrl+e', focus: ['thumb', 'dir'] },
 
     { name: 'thumbImgFullscreen', keyStr: 'f', focus: ['thumb'] },
 
@@ -237,8 +241,6 @@ param.keyCommands = [
     { name: 'sceneMoveRight', keyStr: 'arrowRight', focus: ['scene'] },
     { name: 'sceneMoveTop', keyStr: 'arrowTop', focus: ['scene'] },
     { name: 'sceneMoveBottom', keyStr: 'arrowBottom', focus: ['scene'] },
-
-    { name: 'deleteDir', keyStr: 'ctrl+delete', focus: ['dir'] },
 
 
     { name: 'videoNextSec', keyStr: 'b', focus: ['scene'], type: 'video' },
@@ -253,7 +255,7 @@ param.keyCommands = [
     { name: 'videoFullscreen', keyStr: 'f', focus: ['scene'], type: 'video' },
     { name: 'videoExitFullscreen', keyStr: 'esc', focus: ['scene'], type: 'video' },
 
-    { name: 'textSelect', keyStr: 'a', focus: ['scene'], type: 'txt' },
+    { name: 'textSelect', keyStr: 'ctrl+a', focus: ['scene'], type: 'txt' },
     { name: 'fullscreenWindow', keyStr: 'f11' },
 ];
 //zz.appendToObj(

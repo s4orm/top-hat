@@ -17,6 +17,13 @@ var lang = {
             folders: "Create archives from subdirs",
             unpackBeforeZip: "Unpack zip file, before zip"
         },
+
+        resize: {
+            folder: 'Resize folder',
+            images: 'Resize images',
+
+        },
+
         pack: "Pack",
         packed: "Packed",
         unpack: "Unpack",
@@ -52,7 +59,18 @@ var lang = {
             title: 'Bookmarks'
         },
 
-        antiAliasing: "Turn On|Turn Off antialiasing",
+        filter: {
+            imgOnly: "Filter: show images only (jpg, png, gif...)"
+        },
+
+        antiAliasing: "Turn On|Turn Off antialiasing " + "ctrl+e",
+        closeUnpackTail: "Turn On|Turn Off close unpack tail",
+
+        settings: {
+            title: "Settings",
+            closeTail: "automatic close archives",
+            saved: 'Settings saved',
+        },
 
         history: {
             back: 'History - backward',
@@ -105,7 +123,11 @@ var lang = {
             tree: "Folders"
         },
 
-        close: "Close"
+        close: "Close",
+
+        console: {
+            imagesResized: 'All images was resized'
+        }
     },
 
     ru: {
@@ -182,6 +204,9 @@ var lang = {
         },
         video: {
            createStream: "Создать поток"
+        },
+        audio: {
+
         },
         alert: {
             selectFiles: "Нужно выделить файлы"

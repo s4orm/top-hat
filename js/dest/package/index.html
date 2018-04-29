@@ -13,6 +13,7 @@
 <div id="app" class="app">
 
     <div class="top" v-bind:class="{hidden: isFullscreen}" @click="clickTopMenu($event)">
+        <i class="ico ico-settings" data-type="clickSettings" :title="lang.settings.title"></i>
         <i class="ico ico-file-txt" data-type="clickCreateFile" :title="lang.file.create"></i>
         <i class="ico ico-new-dir" data-type="clickCreateDir" :title="lang.dir.create"></i>
         <i class="ico ico-history-back" data-type="clickHistoryBack" :title="lang.history.back"></i>
@@ -20,16 +21,32 @@
         <i class="ico ico-zip" data-type="clickZip" :title="lang.pack"></i>
         <i class="ico ico-zip-cut-one" data-type="clickZipCutOne" :title="lang.archive.cutOne"></i>
         <i class="ico ico-zip-folders" data-type="clickZipFolders" :title="lang.archive.folders"></i>
-        <i class="ico ico-anti-aliasing" v-bind:class="{ico_anti_aliasing_active: isAntiAliasing}" data-type="clickAntiAliasing" :title="lang.antiAliasing"></i>
+        <i class="ico ico-image-resize" data-type="clickImageResize" :title="lang.resize.images"></i>
+
         <i class="ico ico-rename" data-type="clickRename" :title="lang.rename"></i>
         <i class="ico ico-rename-group" data-type="clickRenameGroup" :title="lang.renameGroup"></i>
         <i class="ico ico-eps-stock" data-type="clickEpsStock" :title="lang.epsStock"></i>
         <i class="ico ico-eps-stock-create-folder" data-type="clickEpsStockCreateDir" :title="lang.epsStockCreateDir"></i>
         <i class="ico ico-rotate-counter" data-type="clickRotateCounter" :title="lang.rotate"></i>
         <i class="ico ico-rotate" data-type="clickRotate" :title="lang.rotate"></i>
+        <i class="ico ico-close-unpack-tail" v-bind:class="{ico_close_unpack_tail: isCloseUnpackTail}" data-type="clickCloseUnpackTail" :title="lang.closeUnpackTail"></i>
+        <i class="ico ico-anti-aliasing" v-bind:class="{ico_anti_aliasing_active: isAntiAliasing}" data-type="clickAntiAliasing" :title="lang.antiAliasing"></i>
+        <i class="ico ico-filter-img-only" v-bind:class="{ico_filter_img_only_active: isFilterImg}" data-type="filter-img-only" :title="lang.filter.imgOnly"></i>
         <b class="ico-separator"></b>
         <i class="ico ico-garbage" data-type="clickDelete" :title="lang.delete"></i>
         <input class="top__search" type="text" :title="lang.search.line" @keyup.enter="searchLineKeyUp($event)" :value="search.val">
+
+        <div class="menu" v-if="settings_show">
+            <div id="settings" class="window settings" @click="clickSettings">
+                <div class="window__title">{{lang.settings.title}}</div>
+                <div class="window__body">
+                    <div class="window__block">
+                        <input type="checkbox" data-act="closeTail" v-model="settings.closeTail" />{{lang.settings.closeTail}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="middle">
@@ -119,6 +136,8 @@
                 </div>
             </div>
 
+            <audio id="sceneAudio" controls class="scene-audio" :src="scene.src" v-else-if="scene.type === 'audio'" ></audio>
+
             <img id="sceneGif" class="scene-gif" :src="scene.src" v-else-if="scene.ext === 'gif'" />
             <img id="sceneSvg" class="scene-svg" :src="scene.src" height="100%" v-else-if="scene.ext === 'svg'" />
             <canvas id="scene" class="scene" data-dd="sceneCanvas" :width="scene.width" :height="scene.height" v-else></canvas>
@@ -167,6 +186,14 @@
                 <i class="tree__zip-unpack" v-else-if="isZipDefault" v-show="isZipDefault"></i>
                 <i class="ico_tree_zip_loading" v-if="isUnpacking"></i>
 
+                <span class="tree__size tree__size_blue" v-if="isBlue"></span>
+                <span class="tree__size tree__size_green" v-if="isGreen"></span>
+                <span class="tree__size tree__size_yellow" v-if="isYellow"></span>
+                <span class="tree__size tree__size_orange" v-if="isOrange"></span>
+                <span class="tree__size tree__size_red" v-if="isRed"></span>
+
+                <span class="hidden" data-act="close" @click="clickZipClose"></span>
+
                 <span class="tree__title__name" data-act="clickDirName" data-dd="tree" :data-id="tree.id" @click="clickDirName" :title="tree.name" :class="{tree__branch__end: isSelected}">{{tree.name}}</span>
                 <span class="tree__file-size" v-if="tree.size" data-name="size">{{tree.size}}</span>
 
@@ -177,6 +204,7 @@
         </ul>
     </li>
 </script>
+
 <script src="tophat.min.js"></script>
 </body>
 </html>

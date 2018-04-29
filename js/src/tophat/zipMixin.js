@@ -4,6 +4,10 @@ var zipMixin = {
 
         unzipFile: function(obj, callback) {
 
+            if (this.settings.closeTail == true) {
+                this.closeTail();
+            }
+
             var obj = obj || {};
             var tmpDir;
             var dirPath = '';
@@ -37,16 +41,15 @@ var zipMixin = {
             /**
              * unzipper ->
              */
+            //tmpDir dirPath
+            var cmdStr = 'unzip "'+dirPath+'" -d "'+tmpDir+'"';
 
-            //var Iconv  = require('iconv').Iconv;
+            if (path.parse(dirPath).ext == '.rar') {
 
-            var unzipper = new DecompressZip(dirPath);
+                cmdStr = 'unrar e "' + dirPath + '" "' + tmpDir + '"';
+            }
 
-            unzipper.on('error', function (err) {
-                this.console(err);
-            }.bind(this));
-
-            unzipper.on('extract', function (log) {
+            require('child_process').exec(cmdStr, function (error, stdout, stderr) {
 
                 this.$set(this.loading, 'unzip', 100);
                 this.$set(this.loading, 'unpackingId', -1);
@@ -61,7 +64,7 @@ var zipMixin = {
                     }
 
                     //looking for files inside dir. If there is files, then load it. If there is not files, then try load first dir in a row
-                    files.forEach(function(fileName, index) {
+                    files.forEach(function (fileName, index) {
 
                         var pathInTmpDir = path.join(tmpDir, fileName);
                         var statFs = fs.lstatSync(pathInTmpDir);
@@ -92,25 +95,140 @@ var zipMixin = {
                     if (callback) {
                         callback(isFile, firstDir);
                     }
-
-
                 }.bind(this));
 
             }.bind(this));
 
-            unzipper.extract({
-                path: tmpDir,
-                filter: function (file) {
+//
+//
+//             var unzipper = new DecompressZip(dirPath);
+//
+//             unzipper.on('error', function (err) {
+//                 this.console(err);
+//             }.bind(this));
+//
+//             unzipper.on('extract', function (log) {
+//
+//                 this.$set(this.loading, 'unzip', 100);
+//                 this.$set(this.loading, 'unpackingId', -1);
+//
+//                 var isFile = false;
+//                 var firstDir = false;
+//
+//                 fs.readdir(tmpDir, function (err, files) {
+//
+//                     if (err) {
+//                         return;
+//                     }
+//
+//                     //looking for files inside dir. If there is files, then load it. If there is not files, then try load first dir in a row
+//                     files.forEach(function(fileName, index) {
+//
+//                         var pathInTmpDir = path.join(tmpDir, fileName);
+//                         var statFs = fs.lstatSync(pathInTmpDir);
+//
+//                         if (statFs.isDirectory()) {
+//                             if (0 == index) {
+//                                 firstDir = pathInTmpDir;
+//                             }
+//                             return;
+//                         }
+//                         else {
+//                             isFile = true;
+//                         }
+//                     });
+//
+//                     if (isFile) {
+//                         this.thumbLoad(tmpDir);
+//                         firstDir = tmpDir;
+//                     }
+//                     else if (firstDir) { //try load first dir in a row
+//
+//                         //this.thumbLoad(firstDir);
+//                     }
+//                     else {
+//                         console.log(tmpDir, 'err');
+//                     }
+//
+//                     if (callback) {
+//                         callback(isFile, firstDir);
+//                     }
+//
+//
+//                 }.bind(this));
+//
+//             }.bind(this));
+//
+//             unzipper.extract({
+//                 path: tmpDir,
+//                 filter: function (file) {
+//
+//                     //var iconv = new Iconv('CP1252', 'CP850');//, 'ASCII//TRANSLIT');
+//                     //var str = (iconv.convert(file.filename)).toString();
+//                     //    iconv = new Iconv('CP850', 'CP866')
+// ///
+// //                            console.log( file.filename, (iconv.convert(str)).toString() )
+//
+//                     return file.type !== "SymbolicLink";
+//                 }
+//             });
 
-                    //var iconv = new Iconv('CP1252', 'CP850');//, 'ASCII//TRANSLIT');
-                    //var str = (iconv.convert(file.filename)).toString();
-                    //    iconv = new Iconv('CP850', 'CP866')
-///
-//                            console.log( file.filename, (iconv.convert(str)).toString() )
+            //var Iconv  = require('iconv').Iconv;
 
-                    return file.type !== "SymbolicLink";
-                }
-            });
+            // Decompress(dirPath, tmpDir, {
+            //     filter: function(file) { return file.type !== "SymbolicLink"; }
+            // }).then(function (files) {
+            //
+            //
+            //     this.$set(this.loading, 'unzip', 100);
+            //     this.$set(this.loading, 'unpackingId', -1);
+            //
+            //     var isFile = false;
+            //     var firstDir = false;
+            //
+            //     fs.readdir(tmpDir, function (err, files) {
+            //
+            //         if (err) {
+            //             return;
+            //         }
+            //
+            //         //looking for files inside dir. If there is files, then load it. If there is not files, then try load first dir in a row
+            //         files.forEach(function(fileName, index) {
+            //
+            //             var pathInTmpDir = path.join(tmpDir, fileName);
+            //             var statFs = fs.lstatSync(pathInTmpDir);
+            //
+            //             if (statFs.isDirectory()) {
+            //                 if (0 == index) {
+            //                     firstDir = pathInTmpDir;
+            //                 }
+            //                 return;
+            //             }
+            //             else {
+            //                 isFile = true;
+            //             }
+            //         });
+            //
+            //         if (isFile) {
+            //             this.thumbLoad(tmpDir);
+            //             firstDir = tmpDir;
+            //         }
+            //         else if (firstDir) { //try load first dir in a row
+            //
+            //             //this.thumbLoad(firstDir);
+            //         }
+            //         else {
+            //             console.log(tmpDir, 'err');
+            //         }
+            //
+            //         if (callback) {
+            //             callback(isFile, firstDir);
+            //         }
+            //
+            //
+            //     }.bind(this));
+            //
+            // }.bind(this));
         },
 
         /**
@@ -147,7 +265,7 @@ var zipMixin = {
             /**
              * zip dir
              */
-            if ('.zip' == path.parse(pathSelected).ext) {
+            if (['.zip', '.rar'].includes(path.parse(pathSelected).ext)) {
                 //over zip file
                 //console.log('origzipfile:', pathSelected, ' fileIs:', param.tmpDirs[pathSelected]);
 
@@ -390,7 +508,7 @@ var zipMixin = {
 
                     this.console(sizeFormated + ', filepath: ' + zipFilePath);
 
-                    zz.q('#' + this.treeParam.idEnd + ' [data-act="clickReloadDir"]').click();
+                    //zz.q('#' + this.treeParam.idEnd + ' [data-act="clickReloadDir"]').click();
 
                 }.bind(this));
 

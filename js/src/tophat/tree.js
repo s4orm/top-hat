@@ -37,22 +37,22 @@ Vue.component('tree', {
 
         isZip: function () {
 
-            return (this.tree.ext == 'zip');
+            return ['zip', 'rar'].includes(this.tree.ext);
         },
 
         isZipOpen: function () {
 
-            return ((2 == this.packStage) && (this.tree.ext == 'zip'))
+            return ((2 == this.packStage) && ['zip', 'rar'].includes(this.tree.ext))
         },
 
         isZipPacked: function () {
 
-            return ((3 == this.packStage) && (this.tree.ext == 'zip'))
+            return ((3 == this.packStage) && ['zip', 'rar'].includes(this.tree.ext))
         },
 
         isZipDefault: function () {
 
-            return ((1 == this.packStage) && (this.tree.ext == 'zip'))
+            return ((1 == this.packStage) && ['zip', 'rar'].includes(this.tree.ext))
         },
 
         isSvg: function () {
@@ -62,6 +62,38 @@ Vue.component('tree', {
         isUnpacking: function () {
             return (this.tree.id == this.$root.loading.unpackingId);
         },
+
+        isBlue: function () {
+            if (['zip', 'rar'].includes(this.tree.ext)) {
+                var sizeMb = this.convertToMByte(this.tree.size);
+                return ((sizeMb > 0) && (sizeMb < 20));
+            }
+        },
+        isGreen: function () {
+            if (['zip', 'rar'].includes(this.tree.ext)) {
+                var sizeMb = this.convertToMByte(this.tree.size);
+                return ((sizeMb > 20) && (sizeMb < 70));
+            }
+        },
+        isYellow: function () {
+            if (['zip', 'rar'].includes(this.tree.ext)) {
+                var sizeMb = this.convertToMByte(this.tree.size);
+                return ((sizeMb > 70) && (sizeMb < 150));
+            }
+        },
+        isOrange: function () {
+            if (['zip', 'rar'].includes(this.tree.ext)) {
+                var sizeMb = this.convertToMByte(this.tree.size);
+                return ((sizeMb > 150) && (sizeMb < 250));
+            }
+        },
+        isRed: function () {
+            if (['zip', 'rar'].includes(this.tree.ext)) {
+                var sizeMb = this.convertToMByte(this.tree.size);
+                return (sizeMb > 250);
+            }
+        },
+
 
         openFolder: function () {
 
@@ -89,6 +121,37 @@ Vue.component('tree', {
 
     methods: {
 
+        convertToMByte: function (str) {
+
+            var obj = str.split(" ");
+
+            if (obj.length < 2) {
+                return false;
+            }
+
+            var val = obj[0];
+            var type = obj[1];
+
+            switch (type) {
+
+                case 'kb':
+
+                    return 1;
+                    break;
+
+                case 'mb':
+                    return val;
+                    break;
+
+                case 'gb':
+
+                    return val * 1024;
+                    break;
+            }
+
+            return false;
+        },
+
         clickZipRepack: function () {
 
             this.$root.zipFolderById(this.tree.id, function(){
@@ -102,6 +165,16 @@ Vue.component('tree', {
                 }.bind(this), 1000);
 
             }.bind(this));
+        },
+
+        clickZipClose: function () {
+
+            this.$set(this, 'open', false);
+            this.$set(this, 'packStage', 3);
+
+            setTimeout(function(){
+                this.$set(this, 'packStage', 1);
+            }.bind(this), 1000);
         },
 
         clickZipUnpack: function () {
@@ -189,8 +262,16 @@ Vue.component('tree', {
 
             if (!isChildren) {
 
-                if ('zip' == zz.getExtFromPath(dir)) {
+                if (['zip','rar'].includes(zz.getExtFromPath(dir))) {
 
+                    var sizeMb = this.convertToMByte(this.tree.size);
+                    if(sizeMb < 160) {
+
+                        var el = zz.q('#' + id + ' [data-act="clickUnzip"]');
+                        if (el) {
+                           el.click();
+                        }
+                    }
                     this.open = false;
                     return;
 

@@ -96,6 +96,7 @@ var fileMixin = {
                 __dirname = process.cwd(),
                 extImgArr = ['jpg', 'jpeg', 'gif', 'png', 'svg'],
                 extVideoArr = ['mp4', 'avi', 'ogg', 'mkv', 'divx', 'wmv', 'flv'],
+                extAudioArr = ['mp3', 'flac', 'opus', 'wav'],
                 extTxtArr = ['txt', 'key', 'js', 'json', 'htm', 'html', 'php', 'xml'], //, 'doc', 'odt', 'epub', 'djvu'
                 extAdobeArr = ['ai', 'eps', 'pdf', 'psd'], // Adobe
                 i = 0,
@@ -139,6 +140,10 @@ var fileMixin = {
                     if (extVideoArr.indexOf(ext) != -1) {
                         type = 'video';
                     }
+                    //filter only audio
+                    if (extAudioArr.indexOf(ext) != -1) {
+                        type = 'audio';
+                    }
                     //filter only images
                     if (extTxtArr.indexOf(ext) != -1) {
                         type = 'text';
@@ -153,6 +158,12 @@ var fileMixin = {
 
                     if (title.length > len) {
                         title = title.replace(/\.[^.]+$/, '').substring(0, len) + '...' + ext;
+                    }
+
+                    if (flag == 'images') {
+                        if (type != 'img') {
+                            return;
+                        }
                     }
 
                     list.push({
@@ -283,5 +294,33 @@ var fileMixin = {
                 callback(results);
             }.bind(this));
         },
+
+        fileReadToJSON: function (fileName, callback) {
+
+            var dirPath = path.join(os.homedir(), '.' + param.programName); // /home/username/.tophat/tophat_bookmarks.json
+            var filePath = path.join(os.homedir(), '.' + param.programName, fileName); // /home/username/.tophat/tophat_bookmarks.json
+
+            if (!fs.existsSync(dirPath)){
+                fs.mkdirSync(dirPath);
+            }
+
+            fs.readFile(filePath, function (err, buf) {
+
+                if (err) {
+                    fs.closeSync(fs.openSync(filePath, 'w'));
+                    return;
+                }
+
+                var str = buf.toString();
+
+                if (str != '') {
+
+                    var json = JSON.parse(buf.toString());
+
+                    callback(json);
+                }
+            });
+
+        }
     }
 };

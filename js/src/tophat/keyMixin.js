@@ -64,6 +64,11 @@ var keyMixin = {
 
                 switch (command) {
 
+                    case 'antiAliasing':
+
+                        this.antiAliasingSet();
+                        break;
+
                     case 'zip':
 
                         this.zipFiles();
@@ -155,6 +160,11 @@ var keyMixin = {
                     case 'delete':
 
                         this.delete();
+                        break;
+
+                    case 'deleteDir':
+
+                        this.delete('dir');
                         break;
 
                     case 'nextDir':

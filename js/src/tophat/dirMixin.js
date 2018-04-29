@@ -125,7 +125,20 @@ var dirMixin = {
             var name = (new Date()).getTime() + dirName;
 
             var dirHash = shasum.update(name).digest('hex').substring(0,20);
-            var dirTmp = path.join(os.tmpdir() , param.programName + '.' + dirHash);
+
+
+            /**
+             * If exist /mnt/tmpfs dir (ram disk) or else /tmp
+             */
+            var tmpDirOS; //dir for tmp files
+
+            if (fs.existsSync(this.$root.tmpfs)){
+                tmpDirOS = this.$root.tmpfs;
+            }
+            else {
+                tmpDirOS = os.tmpdir();
+            }
+            //var dirTmp = path.join(tmpDirOS , param.programName + '.' + dirHash);
 
             //if (!fs.existsSync(dirTmp)){
             //
@@ -144,12 +157,28 @@ var dirMixin = {
             if (!dirName) {
                 return;
             }
+
+            /**
+             * If exist /mnt/tmpfs dir (ram disk) or else /tmp
+             */
+            var tmpDirOS; //dir for tmp files
+
+            if (fs.existsSync(this.$root.tmpfs)){
+                tmpDirOS = this.$root.tmpfs;
+            }
+            else {
+                tmpDirOS = os.tmpdir();
+            }
+
+            console.log(tmpDirOS, 'tmpDirOS');
+
             var shasum = crypto.createHash('sha256');
             var name = (new Date()).getTime() + dirName;
 
             var dirHash = shasum.update(name).digest('hex').substring(0,20);
-            var dirTmp = path.join(os.tmpdir() , param.programName + '.' + dirHash);
 
+            var dirTmp = path.join(tmpDirOS, param.programName + '.' + dirHash);
+            console.log(dirTmp, 'dirTmp');
             param.tmpDirs[dirName] = dirTmp;
 
             if (!fs.existsSync(dirTmp)){

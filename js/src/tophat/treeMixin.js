@@ -28,6 +28,9 @@ var treeMixin = {
                     if (file.search(/\.zip$/) != -1) {
                         return true;
                     }
+                    if (file.search(/\.rar$/) != -1) {
+                        return true;
+                    }
 
                     if (file.search(/^\./) == -1) {
 
@@ -81,7 +84,7 @@ var treeMixin = {
                     ext = false;
                     size = false;
 
-                    if ('.zip' == path.parse(childName).ext) {
+                    if (['.zip','.rar'].includes(path.parse(childName).ext)) {
                         ext = 'zip';
                         isFolder = false;
 
@@ -191,7 +194,7 @@ var treeMixin = {
             var pathDir = param.tree.cachePaths[id];
             var dirType = zz.getExtFromPath(pathDir);
 
-            if ('zip' == dirType) {
+            if (['zip','rar'].includes(dirType)) {
 
                 pathDir = param.tmpDirs[pathDir];
             }
@@ -201,7 +204,7 @@ var treeMixin = {
 
                 var isDir = false;
                 //if zip return true
-                if (path.parse(file).ext == '.zip') {
+                if (['.zip','.rar'].includes(path.parse(file).ext)) {
                     isDir = true;
                     return isDir;
                 }
@@ -234,8 +237,8 @@ var treeMixin = {
 
                 var children = {name: dirName, id: id};
 
-                if ('.zip' == path.parse(dirName).ext) {
-                    ext = 'zip';
+                if (['.zip','.rar'].includes(path.parse(dirName).ext)) {
+                    ext = path.parse(dirName).ext.replace(/\./, '');
                     children.ext = ext;
                     children.size = this.getFileSizeSync(pathToFile).sizeFormatted;
                 }
@@ -373,23 +376,169 @@ var treeMixin = {
         },
 
         /**
+         * @des check is zip folder
+         * @param idTree
+         * @returns {boolean}
+         */
+        treeIsZip: function (idTree) {
+
+            if ('treeRoot' == idTree) {
+                return false;
+            }
+
+            var branchParent = this.treeParentBranchByIdChild(idTree);
+
+            if ('zip' == branchParent.parent.ext) {
+
+               return branchParent.parent.id;
+            }
+            else {
+
+                return this.treeIsZip(branchParent.parent.id);
+            }
+        },
+
+        /**
          * @des click next dir in list
+         * 1. if in zip inserted one dir
+         * 2. if in zip inserted one dir an it dir has children, go to children[0]: dir or zip
+         * 3. if in zip inserted list of dirs, go to next(prev) dir
+         * 4. if in zip inserted list of files
          * @param id
          */
         treeDirGo: function(arrow) {
 
             var idTreeSelected = this.treeParam.idEnd;
-            var branch = this.treeParentBranchByIdChild(idTreeSelected);
-            var list = branch.parent.children;
+            var branchParent = this.treeParentBranchByIdChild(idTreeSelected);
+            var branch = this.treeBranchById(idTreeSelected);
+            var list = branchParent.parent.children;
             var nextDir = false;
-            var isZip = (branch.parent.ext == 'zip') ? true : false;
+
+            var isZip = this.treeIsZip(idTreeSelected); //(branchParent.parent.ext == 'zip') ? true : false;
+            var isChildrenDir = branch.children ? (branch.children.length ? true : false) : false;
+
             var idNext, el, tmpDir;
 
-            if (isZip) {
+            //[2] if is children
+            if (isChildrenDir) {
+                list = branch.children;
+                nextDir = list[0];
+                idNext = nextDir.id;
 
-                idTreeSelected = branch.parent.id;
-                branch = this.treeParentBranchByIdChild(idTreeSelected);
-                list = branch.parent.children;
+                //if next(first children) is zip
+                var branch = this.treeBranchById(idNext);
+                if (['zip','rar'].includes(branch.ext)) {
+                    isZip = branch.id;
+                }
+
+                if (isZip) {
+
+                    el = zz.q('#' + idNext + ' [data-act="clickUnzip"]');
+
+                    if (!el) {
+                        //zip without inserted dirs, load from cache thumbs
+                        tmpDir = param.tmpDirs[param.tree.cachePaths[idNext]];
+                        this.thumbLoad(tmpDir);
+                        el = zz.q('#' + idNext + ' [data-act="clickDirName"]');
+                    }
+                }
+                else {
+                    el = zz.q('#' + idNext + ' [data-act="clickDirName"]');
+                }
+
+                //el = zz.q('#' + idNext + ' [data-act="clickDirName"]');
+                el.click();
+                //this.$root.flag.closeUnpackTail = false;
+                return;
+            }
+
+            //[3] list of dirs, go to next dir
+            if (list) {
+
+                for (var i=0;i<list.length;i++) {
+
+                    if (idTreeSelected == list[i].id) {
+                        if ('next' == arrow) {
+                            if (list[i+1]) {
+                                nextDir = list[i+1];
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                /**
+                 * Если текущая директория последняя в ветке (списке)
+                 * то ищем следующий файл или папку в списке
+                */
+                if (false == nextDir) {
+
+                    var branchParentParent = this.treeParentBranchByIdChild(branchParent.parent.id);
+
+                    if (branchParentParent.parent.children) {
+
+                        list = branchParentParent.parent.children;
+
+                        for (var i=0;i<list.length;i++) {
+
+                            if (branchParent.parent.id == list[i].id) {
+                                if ('next' == arrow) {
+                                    if (list[i+1]) {
+                                        nextDir = list[i+1];
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        if (!nextDir) {
+                            return;
+                        }
+
+                        idNext = nextDir.id;
+
+                        // /**
+                        //  * Если родительская директория - zip,
+                        //  * закрываем zip файл
+                        //  * и ищем следующий файл или папку в списке
+                        //  */
+                        // if ('zip' == branchParent.parent.ext) {
+                        //     //branchParent.parent.children
+                        //
+                        //     this.closeUnpackTail();
+                        // }
+
+                        el = zz.q('#' + idNext + ' [data-act="clickUnzip"]');
+
+                        if (!el) {
+                            //zip without inserted dirs, load from cache thumbs
+                            tmpDir = param.tmpDirs[param.tree.cachePaths[idNext]];
+                            this.thumbLoad(tmpDir);
+                            el = zz.q('#' + idNext + ' [data-act="clickDirName"]');
+                        }
+
+                        if (el) {
+                            el.click();
+                        }
+                    }
+                }
+                else {
+
+                    idNext = nextDir.id;
+
+                    el = zz.q('#' + idNext + ' [data-act="clickUnzip"]');
+
+                    if (!el) {
+                        //zip without inserted dirs, load from cache thumbs
+                        tmpDir = param.tmpDirs[param.tree.cachePaths[idNext]];
+                        this.thumbLoad(tmpDir);
+                        el = zz.q('#' + idNext + ' [data-act="clickDirName"]');
+                    }
+
+                    if (el) {
+                        el.click();
+                    }
+                }
+                return;
             }
 
             for (var i=0;i<list.length;i++) {
@@ -411,15 +560,22 @@ var treeMixin = {
             //nextDirId = nextDir.id;
             //nextDirName = nextDir.name;
 
+            if (isZip) {
+
+                idTreeSelected = branchParent.parent.id;
+                branchParent = this.treeParentBranchByIdChild(idTreeSelected);
+                list = branchParent.parent.children;
+            }
+
             if (nextDir) {
 
                 idNext = nextDir.id;
-                if ('zip' == nextDir.ext) {
+                if (['zip','rar'].includes(nextDir.ext)) {
                     isZip = true;
                 }
 
                 //zip inserted dir         file.zip->dir[0]
-                if (('zip' == nextDir.ext) && nextDir.children){
+                if ((['zip','rar'].includes(nextDir.ext)) && nextDir.children){
                     if (nextDir.children.length > 0) {
                         idNext = nextDir.children[0].id;
                     }
@@ -439,7 +595,6 @@ var treeMixin = {
 
                     el = zz.q('#' + idNext + ' [data-act="clickUnzip"]');
 
-                    console.log(idNext, el, 'ee')
                     if (!el) {
                         //zip without inserted dirs, load from cache thumbs
                         tmpDir = param.tmpDirs[param.tree.cachePaths[idNext]];
@@ -456,6 +611,68 @@ var treeMixin = {
                 }
             }
         },
+
+        /**
+         * @des Close unpack archives and click close tree icon
+         */
+        closeTail: function () {
+
+            var dirs = Object.assign({}, param.tmpDirs),
+                dir;
+
+            param.tmpDirs = {}; //clear tmp
+
+            var tmpId;
+            var elTreeBranch;
+
+            for (var i in dirs) {
+
+                dir = dirs[i];
+
+                tmpId = param.getIdByPath(i);
+
+                elTreeBranch = zz.q('#' + tmpId + ' [data-act="close"]');
+
+                if (elTreeBranch) {
+                    elTreeBranch.click();
+                }
+
+                this.deleteDirRecursive(dir);
+            }
+        },
+
+
+
+        // closeUnpackTail: function () {
+        //     // remove tmp dirs if flag is true
+        //     if (this.$root.flag.closeUnpackTail === true) {
+        //
+        //         var dirs = Object.assign({}, param.tmpDirs),
+        //             dir;
+        //
+        //         param.tmpDirs = {}; //clear tmp
+        //
+        //         var tmpId;
+        //         var elTreeBranch;
+        //
+        //         for (var i in dirs) {
+        //
+        //             dir = dirs[i];
+        //
+        //             tmpId = param.getIdByPath(i);
+        //
+        //             elTreeBranch = zz.q('#' + tmpId + ' [data-act="close"]');
+        //
+        //             if (elTreeBranch) {
+        //                 elTreeBranch.click();
+        //             }
+        //
+        //             this.deleteDirRecursive(dir);
+        //         }
+        //     }
+        // },
+
+
 
         /**
          * @des fast moving to dir throw fullpath

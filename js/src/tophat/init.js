@@ -9,7 +9,8 @@ const iconv = require('iconv-lite');
 const exec = require('child_process').exec;
 //const spawn = require('child_process').spawn;
 
-const DecompressZip = require('decompress-zip');
+// const Decompress = require('decompress');
+// const DecompressZip = require('decompress-zip');
 
 var gui = require('nw.gui');
 var win = gui.Window.get();
@@ -47,11 +48,13 @@ var ennobleConsole = function (obj) {
 
 var app = new Vue({
 
-    mixins: [thumbMixin, sceneMixin, searchMixin, treeMixin, zipMixin, dirMixin, fileMixin, deleteMixin, keyMixin, libMixin, thumbShowMixin, thumbScrollMixin, dragAndDropMixin, topMixin, bookmarksMixin, stockMixin, videoMixin],
+    mixins: [thumbMixin, sceneMixin, searchMixin, settingsMixin, treeMixin, zipMixin, dirMixin, fileMixin, imageProcessingMixin, deleteMixin, keyMixin, libMixin, thumbShowMixin, thumbScrollMixin, dragAndDropMixin, topMixin, bookmarksMixin, stockMixin, videoMixin],
 
     el: "#app",
 
     data: {
+
+        tmpfs: '/mnt/tmpfs',
 
         tree: {},
 
@@ -68,6 +71,11 @@ var app = new Vue({
             val: '',
             turnOff: false,
             notfound: false //if nothing found
+        },
+
+        settings_show: false,
+        settings: {
+            closeTail: false
         },
 
         file: {
@@ -135,6 +143,7 @@ var app = new Vue({
 
             loading: false,
             loadingVideoStream: false,
+            closeUnpackTail: true,
         },
 
         fullscreen: false,
@@ -193,6 +202,10 @@ var app = new Vue({
             }
         },
 
+        filter: {
+            imgOnly: false
+        },
+
         loading: {
 
             unzip: 0,
@@ -238,9 +251,24 @@ var app = new Vue({
 
             return count;
         },
+
         isAntiAliasing: function () {
 
            return this.scene.antiAliasing;
+        },
+
+        isFilterImg: function () {
+
+           return this.filter.imgOnly;
+        },
+
+        /**
+         * @des close unpack archive if we go Next Dir by shortcut key
+         * @returns {boolean|*}
+         */
+        isCloseUnpackTail: function () {
+
+           return this.$root.flag.closeUnpackTail;
         },
 
         isFullscreen: function () {
@@ -281,6 +309,12 @@ var app = new Vue({
 
                 if (__startPath) {
 
+                    this.$set(this, 'treeTabSelected', 'tree');
+
+                    Vue.nextTick(function () {
+                        this.treeScrollSelectedIntoView();
+                    }.bind(this));
+
                     if ('zip' == zz.getExtFromPath(__startPath)) {
 
 
@@ -313,7 +347,45 @@ var app = new Vue({
 
             //read file of bookmarks, if there is. If there is not then create new bookmark file
             this.bookmarksRead();
+            this.settingsRead();
 
+        },
+
+        /**
+         * @description Get active now path
+         * @returns {*}
+         */
+        getActivePath: function(){
+
+            var id = this.treeParam.idEnd;
+            var pathSelected = param.tree.cachePaths[id]; //it can be zip, rar file
+            var tmpDir = param.tmpDirs[pathSelected];
+
+            var activePath;
+
+            if (tmpDir) {
+                activePath = tmpDir;
+            }
+            else {
+                var activePath = pathSelected;
+            }
+
+            return activePath;
+        },
+
+
+
+        /**
+         * @description Get active now path
+         * TODO write
+         * @returns {*}
+         */
+        getActiveTreePath: function(){
+
+            var id = this.treeParam.idEnd;
+            var pathSelected = param.tree.cachePaths[id];
+
+            return pathSelected;
         },
 
         closeProgramm: function () {
@@ -369,12 +441,36 @@ var app = new Vue({
             }
             //scroll thumb
             else {
+
+                var dd = e.target.getAttribute('data-dd');
+                var flagOver = 'thumb';
+
+                if (dd && dd == 'sceneCanvas') {
+                    flagOver = 'scene';
+                }
+
                 if (deltaY > 0) {
-                    this.thumbGoShow('nextRow');
+
+                    if ('scene' == flagOver) {
+                        this.thumbGoShow('next');
+                    }
+                    if ('thumb' == flagOver) {
+                        this.thumbGoShow('nextRow');
+                    }
+
                     this.thumbScrollMoveByKey();
+
                 }
                 else {
-                    this.thumbGoShow('prevRow');
+
+                    if ('scene' == flagOver) {
+                        this.thumbGoShow('prev');
+                    }
+
+                    if ('thumb' == flagOver) {
+                        this.thumbGoShow('prevRow');
+                    }
+
                     this.thumbScrollMoveByKey();
                 }
             }

@@ -25,6 +25,23 @@ var sceneMixin = {
 
     methods: {
 
+        antiAliasingSet: function(){
+
+            if (!this.scene.antiAliasing) {
+                this.$set(this.scene, 'antiAliasing', true);
+            }
+            else {
+                this.$set(this.scene, 'antiAliasing', false);
+            }
+
+            this.$root.setFocus('thumb');
+
+            var el = zz.q('#thumb-' + this.$root.thumb.showed);
+            if (el) {
+                el.click();
+            }
+        },
+
         /**
          * @des Rotate img
          */
@@ -119,6 +136,12 @@ var sceneMixin = {
                 case 'video':
 
                     this.videoParamReset();
+                    this.$set(this.scene, 'src', thumb.src);
+
+                    break;
+
+                case 'audio':
+
                     this.$set(this.scene, 'src', thumb.src);
 
                     break;

@@ -493,6 +493,13 @@ var thumbMixin = {
          */
         thumbLoad: function (dir) {
 
+            var flag = 'all';
+
+            if (this.$root.filter.imgOnly) {
+                flag = 'images';
+            }
+
+
             this.sceneSet('clear');
 
             this.$set(this.thumb, 'selected', []);
@@ -503,9 +510,22 @@ var thumbMixin = {
 
                 this.thumb.threadsLoadingDir.push( 'threadMark-'+(new Date()).getTime() );
 
+                // //filter img if needed
+                // if (this.$root.filter.imgOnly) {
+                //     var arr = [];
+                //     for (var i=0;i<list.length;i++) {
+                //
+                //         if (['jpg', 'jpeg', 'png', 'gif'].includes(list[i].ext)) {
+                //             arr.push(list[i]);
+                //         }
+                //     }
+                //     list = arr;
+                // }
+
                 this.$set(this.thumb, 'dir', list);
                 this.thumbFrameSet(0);
                 this.thumbScrollInit();
+
                 //console name and size
                 if (this.thumb.dir[0]) {
                     this.console(this.thumb.dir[0].name);
@@ -572,7 +592,7 @@ var thumbMixin = {
 
                 this.setFocus('thumb');
 
-            }.bind(this), 'images', dir);
+            }.bind(this), flag, dir);
         },
 
 

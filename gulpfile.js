@@ -46,6 +46,8 @@ gulp.task('js-tophat', function(){
     return gulp.src([
         'js/src/tophat/dirMixin.js',
         'js/src/tophat/fileMixin.js',
+        'js/src/tophat/imageProcessingMixin.js',
+        'js/src/tophat/settingsMixin.js',
         'js/src/tophat/deleteMixin.js',
         'js/src/tophat/keyMixin.js',
         'js/src/tophat/libMixin.js',

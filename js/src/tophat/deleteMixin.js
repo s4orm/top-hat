@@ -46,7 +46,7 @@ var deleteMixin = {
 
                             var thumb = this.getThumbById(id);
 
-                            if ('zip' == thumb.ext) {
+                            if (['zip', 'rar'].includes(thumb.ext)) {
                                 isZipFlag = true;
                             }
 
