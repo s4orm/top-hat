@@ -8,7 +8,7 @@ Zip, Unzip, Repack, Edit inside archive
 ##Formats reading
 image: jpg, png, gif, eps, ai,
 txt: txt,
-archive: zip,
+archive: zip, rar
 video: mp4, ogg,
 audio: mp3, flac, wav, ogg
 
