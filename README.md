@@ -32,6 +32,9 @@ create dir name: /home/[username]/TopHat with structure
 Command for execute:
 /home/[username]/TopHat/sdk/nw /home/[username]/TopHat/package/
 
+Command for execute Linux Crusader:
+  /home/[username]/TopHat/sdk/nw /home/[username]/TopHat/package %aCurrent%
+
 where [username] your user name
 where sdk your download sdk or normal nwjs dir (for example: nwjs-sdk-v0.25.4-linux-x64, you can rename it to sdk)
 
