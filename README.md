@@ -28,6 +28,7 @@ create dir name: /home/[username]/TopHat with structure
 
 1. /home/[username]/TopHat/sdk      (https://nwjs.io/downloads/)
 2. /home/[username]/TopHat/package/ (top-hat/js/dest/package/)
+3. argument to open current dir Crusader %aCurrent%
 
 Command for execute:
 /home/[username]/TopHat/sdk/nw /home/[username]/TopHat/package/
